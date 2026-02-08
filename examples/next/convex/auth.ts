@@ -1,6 +1,5 @@
-import { components } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { internalAction, query } from "./_generated/server";
-import authSchema from "./betterAuth/schema";
 import { createClient, GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import {
@@ -8,6 +7,8 @@ import {
   genericOAuth,
   twoFactor,
   username,
+  organization,
+  admin,
 } from "better-auth/plugins";
 import { emailOTP } from "better-auth/plugins";
 import {
@@ -23,19 +24,12 @@ import { DataModel } from "./_generated/dataModel";
 import { v } from "convex/values";
 import authConfig from "./auth.config";
 
-// This implementation uses Local Install as it would be in a new project.
-
 const siteUrl = process.env.SITE_URL;
 
-export const authComponent = createClient<DataModel, typeof authSchema>(
-  components.betterAuth,
-  {
-    local: {
-      schema: authSchema,
-    },
-    verbose: false,
-  },
-);
+export const authComponent: ReturnType<typeof createClient<DataModel>> =
+  createClient<DataModel>({
+    adapter: internal.adapter,
+  });
 
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
   return {
@@ -119,6 +113,8 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
           },
         ],
       }),
+      organization({ teams: { enabled: true } }),
+      admin(),
       convex({
         authConfig,
       }),
@@ -128,6 +124,8 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
 
 export const createAuth = (ctx: GenericCtx<DataModel>) =>
   betterAuth(createAuthOptions(ctx));
+
+export type auth = ReturnType<typeof createAuth>;
 
 export const { getAuthUser } = authComponent.clientApi();
 
@@ -149,12 +147,10 @@ export const getCurrentUser = query({
   },
 });
 
-// Get a user by their Better Auth user id with Local Install
+// Get a user by their Better Auth user id (same-schema mode: direct db access)
 export const getUserById = query({
   args: { userId: v.string() },
   handler: async (ctx, args) => {
-    return ctx.runQuery(components.betterAuth.users.getUser, {
-      userId: args.userId,
-    });
+    return authComponent.getAnyUserById(ctx, args.userId);
   },
 });

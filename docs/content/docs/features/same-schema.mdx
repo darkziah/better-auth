@@ -1,0 +1,176 @@
+---
+title: Same Schema Mode
+description: Auth tables in your own schema.
+---
+
+Same Schema mode puts Better Auth tables directly in your app's
+`convex/schema.ts`. This means no Convex Component, no `defineComponent`, and no
+`app.use()`.
+
+Auth data becomes part of your app's database, enabling direct `ctx.db` access
+to auth tables, joining auth data with your app's tables, and single-transaction
+semantics for auth checks within your queries and mutations.
+
+## When to use Same Schema mode
+
+- **Direct access:** Query auth tables like `user` or `session` directly via
+  `ctx.db` from any Convex function.
+- **Relational joins:** Join auth data with your app tables without crossing
+  component boundaries or using `ctx.runQuery`.
+- **Atomicity:** Perform auth checks and data modifications in a single
+  transaction.
+- **Simpler configuration:** No need to manage a separate component directory or
+  `convex.config.ts` registration.
+
+## When to use Component mode
+
+- **Isolation:** You want to keep auth data sandboxed and separate from your
+  app's schema.
+- **Multiple instances:** You need multiple Better Auth instances within the
+  same Convex project.
+- **Strict boundaries:** You prefer a strict separation of concerns between
+  authentication and application logic.
+
+## Installation
+
+<Callout>
+  Before you begin, follow the [Getting Started](/) guide to set up Convex +
+  Better Auth for your project. Then return here to walk through converting to
+  or setting up Same Schema mode.
+</Callout>
+
+<div className="fd-steps">
+  <div className="fd-step">
+
+    ### Add auth tables to your schema
+
+    Import `authTables` and spread them into your schema definition.
+
+    ```ts title="convex/schema.ts"
+    import { defineSchema, defineTable } from "convex/server";
+    import { v } from "convex/values";
+    import { authTables } from "@convex-dev/better-auth/schema";
+
+    export default defineSchema({
+      ...authTables,
+      // Your app tables
+      todos: defineTable({
+        text: v.string(),
+        userId: v.id("user"),
+      }).index("userId", ["userId"]),
+    });
+    ```
+
+  </div>
+
+  <div className="fd-step">
+
+    ### Create the adapter file
+
+    Use `createLocalApi` to create an adapter that operates directly on your app's schema.
+
+    ```ts title="convex/adapter.ts"
+    import { createLocalApi } from "@convex-dev/better-auth";
+    import schema from "./schema";
+    import { createAuthOptions } from "./auth";
+
+    export const {
+      create,
+      findOne,
+      findMany,
+      updateOne,
+      updateMany,
+      deleteOne,
+      deleteMany,
+    } = createLocalApi(schema, createAuthOptions);
+    ```
+
+  </div>
+
+  <div className="fd-step">
+
+    ### Configure auth
+
+    <Callout>
+      Unlike component mode, Same Schema mode does **not** require `app.use(betterAuth)` in `convex.config.ts` or `components.betterAuth` in your client configuration.
+    </Callout>
+
+    Configure your `authComponent` to use your local adapter.
+
+    ```ts title="convex/auth.ts"
+    import { createClient, type GenericCtx } from "@convex-dev/better-auth";
+    import { internal } from "./_generated/api";
+    import { DataModel } from "./_generated/dataModel";
+    import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
+    import { convex } from "@convex-dev/better-auth/plugins";
+
+    export const authComponent = createClient<DataModel>({
+      adapter: internal.adapter,
+    });
+
+    export const createAuthOptions = (ctx: GenericCtx<DataModel>) =>
+      ({
+        database: authComponent.adapter(ctx),
+        // ... your auth config (e.g. email, social providers)
+        plugins: [
+          convex({ authConfig }),
+        ],
+      }) satisfies BetterAuthOptions;
+
+    export const createAuth = (ctx: GenericCtx<DataModel>) =>
+      betterAuth(createAuthOptions(ctx));
+    ```
+
+  </div>
+
+  <div className="fd-step">
+
+    ### Register HTTP routes
+
+    Register the auth routes in your `convex/http.ts` file. This remains the same as in component mode.
+
+    ```ts title="convex/http.ts"
+    import { httpRouter } from "convex/server";
+    import { authComponent, createAuth } from "./auth";
+
+    const http = httpRouter();
+
+    authComponent.registerRoutes(http, createAuth, { cors: true });
+
+    export default http;
+    ```
+
+  </div>
+
+  <div className="fd-step">
+
+    ### You're done!
+
+    Better Auth is now integrated directly into your app's schema. You can now use `ctx.db.query("user")` and other database methods directly in your Convex functions.
+
+  </div>
+</div>
+
+## Comparison
+
+| Feature                    | Component Mode                 | Same Schema Mode             |
+| -------------------------- | ------------------------------ | ---------------------------- |
+| **Auth table location**    | Sandboxed in component         | App's `convex/schema.ts`     |
+| **`convex.config.ts`**     | `app.use(betterAuth)` required | Not needed                   |
+| **Direct `ctx.db` access** | No — must use `ctx.runQuery`   | Yes — `ctx.db.query("user")` |
+| **Transaction semantics**  | Separate transactions          | Same transaction             |
+| **Data isolation**         | Fully sandboxed                | Shared with app              |
+| **Setup complexity**       | Simpler initial setup          | Slightly more setup          |
+
+## Migration from Component Mode
+
+If you are already using Component mode and want to move to Same Schema mode:
+
+1.  **Update Schema:** Add `authTables` to your `convex/schema.ts`.
+2.  **Create Adapter:** Create `convex/adapter.ts` using `createLocalApi`.
+3.  **Clean Config:** Remove `app.use(betterAuth)` from
+    `convex/convex.config.ts`.
+4.  **Update Client:** In `convex/auth.ts`, update `createClient` to use
+    `{ adapter: internal.adapter }` instead of `components.betterAuth`.
+5.  **Clean Up:** You can eventually remove the `convex/betterAuth` directory if
+    it's no longer used.

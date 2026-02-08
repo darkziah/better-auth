@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as adapter from "../adapter.js";
 import type * as auth from "../auth.js";
 import type * as email from "../email.js";
 import type * as emails_components_BaseEmail from "../emails/components/BaseEmail.js";
@@ -25,6 +26,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  adapter: typeof adapter;
   auth: typeof auth;
   email: typeof email;
   "emails/components/BaseEmail": typeof emails_components_BaseEmail;
@@ -63,6 +65,5 @@ export declare const internal: FilterApi<
 >;
 
 export declare const components: {
-  betterAuth: import("./betterAuth/_generated/component.js").ComponentApi<"betterAuth">;
   resend: import("@convex-dev/resend/_generated/component.js").ComponentApi<"resend">;
 };

@@ -7,8 +7,10 @@ import {
   genericOAuthClient,
   anonymousClient,
   inferAdditionalFields,
+  organizationClient,
+  adminClient,
 } from "better-auth/client/plugins";
-import type { auth } from "@/convex/betterAuth/auth";
+import type { auth } from "@/convex/auth";
 import { convexClient } from "@convex-dev/better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 import { PropsWithChildren } from "react";
@@ -19,12 +21,14 @@ import { useRouter } from "next/navigation";
 
 export const authClient = createAuthClient({
   plugins: [
-    inferAdditionalFields<typeof auth>(),
+    inferAdditionalFields<auth>(),
     anonymousClient(),
     magicLinkClient(),
     emailOTPClient(),
     twoFactorClient(),
     genericOAuthClient(),
+    organizationClient(),
+    adminClient(),
     convexClient(),
   ],
 });

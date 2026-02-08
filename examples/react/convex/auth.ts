@@ -1,10 +1,10 @@
 import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex, crossDomain } from "@convex-dev/better-auth/plugins";
 import { requireActionCtx } from "@convex-dev/better-auth/utils";
-import { components } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { query } from "./_generated/server";
 import { betterAuth, type BetterAuthOptions } from "better-auth/minimal";
-import { emailOTP, magicLink } from "better-auth/plugins";
+import { emailOTP, magicLink, organization, admin } from "better-auth/plugins";
 import { DataModel } from "./_generated/dataModel";
 import {
   sendEmailVerification,
@@ -16,9 +16,10 @@ import authConfig from "convex/auth.config";
 
 const siteUrl = process.env.SITE_URL!;
 
-export const authComponent = createClient<DataModel>(components.betterAuth, {
-  verbose: false,
-});
+export const authComponent: ReturnType<typeof createClient<DataModel>> =
+  createClient<DataModel>({
+    adapter: internal.adapter,
+  });
 
 export const createAuthOptions = (ctx: GenericCtx<DataModel>) =>
   ({
@@ -74,6 +75,8 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) =>
           });
         },
       }),
+      organization({ teams: { enabled: true } }),
+      admin(),
       crossDomain({ siteUrl }),
       convex({ authConfig }),
     ],

@@ -4,7 +4,14 @@ import {
   createClient,
   GenericCtx,
 } from '@convex-dev/better-auth'
-import { anonymous, emailOTP, magicLink, twoFactor } from 'better-auth/plugins'
+import {
+  anonymous,
+  emailOTP,
+  magicLink,
+  twoFactor,
+  organization,
+  admin,
+} from 'better-auth/plugins'
 import { convex } from '@convex-dev/better-auth/plugins'
 import {
   sendEmailVerification,
@@ -13,8 +20,7 @@ import {
   sendResetPassword,
 } from './email'
 import { requireActionCtx } from '@convex-dev/better-auth/utils'
-import { components, internal } from './_generated/api'
-import betterAuthSchema from './betterAuth/schema'
+import { internal } from './_generated/api'
 import { internalAction, query, QueryCtx } from './_generated/server'
 import { DataModel, Id } from './_generated/dataModel'
 import { asyncMap, withoutSystemFields } from 'convex-helpers'
@@ -25,48 +31,46 @@ const siteUrl = process.env.SITE_URL
 
 const authFunctions: AuthFunctions = internal.auth
 
-export const authComponent = createClient<DataModel, typeof betterAuthSchema>(
-  components.betterAuth,
-  {
-    authFunctions,
-    local: {
-      schema: betterAuthSchema,
-    },
-    verbose: false,
-    triggers: {
-      user: {
-        onCreate: async (ctx, authUser) => {
-          const userId = await ctx.db.insert('users', {
-            email: authUser.email,
-          })
-          await authComponent.setUserId(ctx, authUser._id, userId)
-        },
-        onUpdate: async (ctx, newUser, oldUser) => {
-          if (oldUser.email === newUser.email) {
-            return
-          }
-          await ctx.db.patch(newUser.userId as Id<'users'>, {
-            email: newUser.email,
-          })
-        },
-        onDelete: async (ctx, authUser) => {
-          const user = await ctx.db.get(authUser.userId as Id<'users'>)
-          if (!user) {
-            return
-          }
-          const todos = await ctx.db
-            .query('todos')
-            .withIndex('userId', (q) => q.eq('userId', user._id))
-            .collect()
-          await asyncMap(todos, async (todo) => {
-            await ctx.db.delete(todo._id)
-          })
-          await ctx.db.delete(user._id)
+export const authComponent: ReturnType<typeof createClient<DataModel>> =
+  createClient<DataModel>(
+    { adapter: internal.adapter },
+    {
+      authFunctions,
+      verbose: false,
+      triggers: {
+        user: {
+          onCreate: async (ctx, authUser) => {
+            const userId = await ctx.db.insert('users', {
+              email: authUser.email,
+            })
+            await authComponent.setUserId(ctx, authUser._id, userId)
+          },
+          onUpdate: async (ctx, newUser, oldUser) => {
+            if (oldUser.email === newUser.email) {
+              return
+            }
+            await ctx.db.patch(newUser.userId as Id<'users'>, {
+              email: newUser.email,
+            })
+          },
+          onDelete: async (ctx, authUser) => {
+            const user = await ctx.db.get(authUser.userId as Id<'users'>)
+            if (!user) {
+              return
+            }
+            const todos = await ctx.db
+              .query('todos')
+              .withIndex('userId', (q) => q.eq('userId', user._id))
+              .collect()
+            await asyncMap(todos, async (todo) => {
+              await ctx.db.delete(todo._id)
+            })
+            await ctx.db.delete(user._id)
+          },
         },
       },
     },
-  },
-)
+  )
 
 export const { onCreate, onUpdate, onDelete } = authComponent.triggersApi()
 
@@ -139,6 +143,8 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) =>
       }),
       twoFactor(),
       anonymous(),
+      organization({ teams: { enabled: true } }),
+      admin(),
       convex({
         authConfig,
       }),
