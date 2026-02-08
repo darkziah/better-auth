@@ -42,6 +42,7 @@ export function organization(options) {
                 logo: { type: "string", required: false },
                 createdAt: { type: "date", required: true },
                 metadata: { type: "string", required: false },
+                ...options?.schema?.organization?.additionalFields,
             },
         },
         member: {
@@ -96,6 +97,7 @@ export function organization(options) {
                     references: { model: "user", field: "id" },
                     required: true,
                 },
+                ...options?.schema?.invitation?.additionalFields,
             },
         },
         session: {

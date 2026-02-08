@@ -9,7 +9,7 @@ import {
 export default defineSchema({
   ...getConvexAuthTables({
     plugins: [organization({ teams: { enabled: true } }), admin()],
-  } as any),
+  }),
 
   users: defineTable({
     email: v.string(),

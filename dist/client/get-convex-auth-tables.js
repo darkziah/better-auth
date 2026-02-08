@@ -9,7 +9,7 @@ import { indexFields } from "./create-schema.js";
  * Source: @better-auth/core v1.2.8
  * This function is pure — zero runtime dependencies.
  */
-const getAuthTables = (options) => {
+export const getAuthTables = (options) => {
     const pluginSchema = (options.plugins ?? []).reduce((acc, plugin) => {
         const schema = plugin.schema;
         if (!schema)

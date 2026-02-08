@@ -2,36 +2,36 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     select?: string[] | undefined;
     onCreateHandle?: string | undefined;
     input: {
+        model: string;
         data: {
             [x: string]: any;
             [x: number]: any;
             [x: symbol]: any;
         };
-        model: string;
     };
 }, Promise<any>>, findOne: import("convex/server").RegisteredQuery<"public", {
     join?: any;
     select?: string[] | undefined;
     where?: {
-        operator?: "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "not_in" | "contains" | "starts_with" | "ends_with" | undefined;
+        operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
         connector?: "AND" | "OR" | undefined;
-        value: string | number | boolean | string[] | number[] | null;
         field: string;
+        value: string | number | boolean | number[] | string[] | null;
     }[] | undefined;
     model: string;
 }, Promise<import("convex/server").GenericDocument | null>>, findMany: import("convex/server").RegisteredQuery<"public", {
     join?: any;
-    limit?: number | undefined;
     where?: {
-        operator?: "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "not_in" | "contains" | "starts_with" | "ends_with" | undefined;
+        operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
         connector?: "AND" | "OR" | undefined;
-        value: string | number | boolean | string[] | number[] | null;
         field: string;
+        value: string | number | boolean | number[] | string[] | null;
     }[] | undefined;
     sortBy?: {
         field: string;
         direction: "asc" | "desc";
     } | undefined;
+    limit?: number | undefined;
     offset?: number | undefined;
     model: string;
     paginationOpts: {
@@ -46,20 +46,34 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     onUpdateHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "not_in" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
-            value: string | number | boolean | string[] | number[] | null;
             field: string;
+            value: string | number | boolean | number[] | string[] | null;
         }[] | undefined;
+        model: import("./_generated/dataModel.js").TableNames;
         update: {
             [x: string]: unknown;
             [x: number]: unknown;
             [x: symbol]: unknown;
         };
-        model: import("./_generated/dataModel.js").TableNames;
     };
 }, Promise<any>>, updateMany: import("convex/server").RegisteredMutation<"public", {
     onUpdateHandle?: string | undefined;
+    input: {
+        where?: {
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            connector?: "AND" | "OR" | undefined;
+            field: string;
+            value: string | number | boolean | number[] | string[] | null;
+        }[] | undefined;
+        model: import("./_generated/dataModel.js").TableNames;
+        update: {
+            [x: string]: unknown;
+            [x: number]: unknown;
+            [x: symbol]: unknown;
+        };
+    };
     paginationOpts: {
         id?: number;
         endCursor?: string | null;
@@ -67,20 +81,6 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
         maximumBytesRead?: number;
         numItems: number;
         cursor: string | null;
-    };
-    input: {
-        where?: {
-            operator?: "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "not_in" | "contains" | "starts_with" | "ends_with" | undefined;
-            connector?: "AND" | "OR" | undefined;
-            value: string | number | boolean | string[] | number[] | null;
-            field: string;
-        }[] | undefined;
-        update: {
-            [x: string]: unknown;
-            [x: number]: unknown;
-            [x: symbol]: unknown;
-        };
-        model: import("./_generated/dataModel.js").TableNames;
     };
 }, Promise<{
     count: number;
@@ -93,15 +93,24 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     onDeleteHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "not_in" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
-            value: string | number | boolean | string[] | number[] | null;
             field: string;
+            value: string | number | boolean | number[] | string[] | null;
         }[] | undefined;
         model: import("./_generated/dataModel.js").TableNames;
     };
 }, Promise<import("convex/server").GenericDocument | undefined>>, deleteMany: import("convex/server").RegisteredMutation<"public", {
     onDeleteHandle?: string | undefined;
+    input: {
+        where?: {
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            connector?: "AND" | "OR" | undefined;
+            field: string;
+            value: string | number | boolean | number[] | string[] | null;
+        }[] | undefined;
+        model: import("./_generated/dataModel.js").TableNames;
+    };
     paginationOpts: {
         id?: number;
         endCursor?: string | null;
@@ -109,15 +118,6 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
         maximumBytesRead?: number;
         numItems: number;
         cursor: string | null;
-    };
-    input: {
-        where?: {
-            operator?: "eq" | "ne" | "lt" | "lte" | "gt" | "gte" | "in" | "not_in" | "contains" | "starts_with" | "ends_with" | undefined;
-            connector?: "AND" | "OR" | undefined;
-            value: string | number | boolean | string[] | number[] | null;
-            field: string;
-        }[] | undefined;
-        model: import("./_generated/dataModel.js").TableNames;
     };
 }, Promise<{
     count: number;

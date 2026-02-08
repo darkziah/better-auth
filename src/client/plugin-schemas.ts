@@ -22,25 +22,25 @@
  */
 
 interface SchemaField {
-  type: string;
-  required?: boolean;
-  sortable?: boolean;
-  unique?: boolean;
-  index?: boolean;
-  input?: boolean;
-  defaultValue?: unknown;
-  references?: { model: string; field: string };
-  fieldName?: string;
+	type: string;
+	required?: boolean;
+	sortable?: boolean;
+	unique?: boolean;
+	index?: boolean;
+	input?: boolean;
+	defaultValue?: unknown;
+	references?: { model: string; field: string };
+	fieldName?: string;
 }
 
 interface PluginSchemaTable {
-  fields: Record<string, SchemaField>;
-  modelName?: string;
+	fields: Record<string, SchemaField>;
+	modelName?: string;
 }
 
 interface SchemaOnlyPlugin {
-  id: string;
-  schema: Record<string, PluginSchemaTable>;
+	id: string;
+	schema: Record<string, PluginSchemaTable>;
 }
 
 /**
@@ -50,124 +50,134 @@ interface SchemaOnlyPlugin {
  * runtime dependencies.
  */
 export function organization(options?: {
-  teams?: { enabled?: boolean };
+	teams?: { enabled?: boolean };
+	schema?: {
+		organization?: {
+			additionalFields?: Record<string, SchemaField>;
+		};
+		invitation?: {
+			additionalFields?: Record<string, SchemaField>;
+		};
+	};
 }): SchemaOnlyPlugin {
-  const teamsEnabled = options?.teams?.enabled ?? false;
+	const teamsEnabled = options?.teams?.enabled ?? false;
 
-  const schema: Record<string, PluginSchemaTable> = {
-    organization: {
-      fields: {
-        name: { type: "string", required: true, sortable: true },
-        slug: {
-          type: "string",
-          required: true,
-          unique: true,
-          sortable: true,
-          index: true,
-        },
-        logo: { type: "string", required: false },
-        createdAt: { type: "date", required: true },
-        metadata: { type: "string", required: false },
-      },
-    },
-    member: {
-      fields: {
-        organizationId: {
-          type: "string",
-          required: true,
-          references: { model: "organization", field: "id" },
-          index: true,
-        },
-        userId: {
-          type: "string",
-          required: true,
-          references: { model: "user", field: "id" },
-          index: true,
-        },
-        role: {
-          type: "string",
-          required: true,
-          sortable: true,
-          defaultValue: "member",
-        },
-        createdAt: { type: "date", required: true },
-      },
-    },
-    invitation: {
-      fields: {
-        organizationId: {
-          type: "string",
-          required: true,
-          references: { model: "organization", field: "id" },
-          index: true,
-        },
-        email: {
-          type: "string",
-          required: true,
-          sortable: true,
-          index: true,
-        },
-        role: { type: "string", required: false, sortable: true },
-        teamId: { type: "string", required: false, sortable: true },
-        status: {
-          type: "string",
-          required: true,
-          sortable: true,
-          defaultValue: "pending",
-        },
-        expiresAt: { type: "date", required: true },
-        createdAt: { type: "date", required: true },
-        inviterId: {
-          type: "string",
-          references: { model: "user", field: "id" },
-          required: true,
-        },
-      },
-    },
-    session: {
-      fields: {
-        activeOrganizationId: { type: "string", required: false },
-        ...(teamsEnabled
-          ? { activeTeamId: { type: "string", required: false } }
-          : {}),
-      },
-    },
-  };
+	const schema: Record<string, PluginSchemaTable> = {
+		organization: {
+			fields: {
+				name: { type: "string", required: true, sortable: true },
+				slug: {
+					type: "string",
+					required: true,
+					unique: true,
+					sortable: true,
+					index: true,
+				},
+				logo: { type: "string", required: false },
+				createdAt: { type: "date", required: true },
+				metadata: { type: "string", required: false },
+				...options?.schema?.organization?.additionalFields,
+			},
+		},
+		member: {
+			fields: {
+				organizationId: {
+					type: "string",
+					required: true,
+					references: { model: "organization", field: "id" },
+					index: true,
+				},
+				userId: {
+					type: "string",
+					required: true,
+					references: { model: "user", field: "id" },
+					index: true,
+				},
+				role: {
+					type: "string",
+					required: true,
+					sortable: true,
+					defaultValue: "member",
+				},
+				createdAt: { type: "date", required: true },
+			},
+		},
+		invitation: {
+			fields: {
+				organizationId: {
+					type: "string",
+					required: true,
+					references: { model: "organization", field: "id" },
+					index: true,
+				},
+				email: {
+					type: "string",
+					required: true,
+					sortable: true,
+					index: true,
+				},
+				role: { type: "string", required: false, sortable: true },
+				teamId: { type: "string", required: false, sortable: true },
+				status: {
+					type: "string",
+					required: true,
+					sortable: true,
+					defaultValue: "pending",
+				},
+				expiresAt: { type: "date", required: true },
+				createdAt: { type: "date", required: true },
+				inviterId: {
+					type: "string",
+					references: { model: "user", field: "id" },
+					required: true,
+				},
+				...options?.schema?.invitation?.additionalFields,
+			},
+		},
+		session: {
+			fields: {
+				activeOrganizationId: { type: "string", required: false },
+				...(teamsEnabled
+					? { activeTeamId: { type: "string", required: false } }
+					: {}),
+			},
+		},
+	};
 
-  if (teamsEnabled) {
-    schema.team = {
-      fields: {
-        name: { type: "string", required: true },
-        organizationId: {
-          type: "string",
-          required: true,
-          references: { model: "organization", field: "id" },
-          index: true,
-        },
-        createdAt: { type: "date", required: true },
-        updatedAt: { type: "date", required: false },
-      },
-    };
-    schema.teamMember = {
-      fields: {
-        teamId: {
-          type: "string",
-          required: true,
-          references: { model: "team", field: "id" },
-          index: true,
-        },
-        userId: {
-          type: "string",
-          required: true,
-          references: { model: "user", field: "id" },
-          index: true,
-        },
-        createdAt: { type: "date", required: false },
-      },
-    };
-  }
+	if (teamsEnabled) {
+		schema.team = {
+			fields: {
+				name: { type: "string", required: true },
+				organizationId: {
+					type: "string",
+					required: true,
+					references: { model: "organization", field: "id" },
+					index: true,
+				},
+				createdAt: { type: "date", required: true },
+				updatedAt: { type: "date", required: false },
+			},
+		};
+		schema.teamMember = {
+			fields: {
+				teamId: {
+					type: "string",
+					required: true,
+					references: { model: "team", field: "id" },
+					index: true,
+				},
+				userId: {
+					type: "string",
+					required: true,
+					references: { model: "user", field: "id" },
+					index: true,
+				},
+				createdAt: { type: "date", required: false },
+			},
+		};
+	}
 
-  return { id: "organization", schema };
+	return { id: "organization", schema };
 }
 
 /**
@@ -177,27 +187,27 @@ export function organization(options?: {
  * runtime dependencies.
  */
 export function admin(): SchemaOnlyPlugin {
-  return {
-    id: "admin",
-    schema: {
-      user: {
-        fields: {
-          role: { type: "string", required: false, input: false },
-          banned: {
-            type: "boolean",
-            defaultValue: false,
-            required: false,
-            input: false,
-          },
-          banReason: { type: "string", required: false, input: false },
-          banExpires: { type: "date", required: false, input: false },
-        },
-      },
-      session: {
-        fields: {
-          impersonatedBy: { type: "string", required: false },
-        },
-      },
-    },
-  };
+	return {
+		id: "admin",
+		schema: {
+			user: {
+				fields: {
+					role: { type: "string", required: false, input: false },
+					banned: {
+						type: "boolean",
+						defaultValue: false,
+						required: false,
+						input: false,
+					},
+					banReason: { type: "string", required: false, input: false },
+					banExpires: { type: "date", required: false, input: false },
+				},
+			},
+			session: {
+				fields: {
+					impersonatedBy: { type: "string", required: false },
+				},
+			},
+		},
+	};
 }

@@ -20,20 +20,14 @@
  * });
  * ```
  */
-/**
- * Subset of `DBFieldType` from `@better-auth/core` that covers all types
- * used by plugin schemas.  Defined locally to avoid importing the heavy
- * runtime barrel.
- */
-type FieldType = "string" | "number" | "boolean" | "date" | "json" | "string[]" | "number[]";
 interface SchemaField {
-    type: FieldType;
+    type: string;
     required?: boolean;
     sortable?: boolean;
     unique?: boolean;
     index?: boolean;
     input?: boolean;
-    defaultValue?: string | number | boolean | Date | null;
+    defaultValue?: unknown;
     references?: {
         model: string;
         field: string;
@@ -57,6 +51,14 @@ interface SchemaOnlyPlugin {
 export declare function organization(options?: {
     teams?: {
         enabled?: boolean;
+    };
+    schema?: {
+        organization?: {
+            additionalFields?: Record<string, SchemaField>;
+        };
+        invitation?: {
+            additionalFields?: Record<string, SchemaField>;
+        };
     };
 }): SchemaOnlyPlugin;
 /**
