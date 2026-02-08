@@ -17,3 +17,6 @@ package-lock.json
 # npm pack output
 *.tgz
 *.tsbuildinfo
+
+# Agent tooling
+.sisyphus/
