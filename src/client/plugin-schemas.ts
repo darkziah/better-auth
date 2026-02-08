@@ -21,20 +21,52 @@
  * ```
  */
 
+type DBPrimitive =
+	| string
+	| number
+	| boolean
+	| Date
+	| null
+	| undefined
+	| string[]
+	| number[]
+	| (Record<string, unknown> | unknown[]);
+
 interface SchemaField {
 	type: "string" | "number" | "boolean" | "date";
 	required?: boolean;
-	sortable?: boolean;
-	unique?: boolean;
-	index?: boolean;
+	returned?: boolean;
 	input?: boolean;
-	defaultValue?: unknown;
-	references?: { model: string; field: string };
+	defaultValue?: DBPrimitive | (() => DBPrimitive);
+	onUpdate?: () => DBPrimitive;
+	transform?: {
+		input?: (value: any) => any;
+		output?: (value: any) => any;
+	};
+	references?: {
+		model: string;
+		field: string;
+		onDelete?:
+			| "no action"
+			| "restrict"
+			| "cascade"
+			| "set null"
+			| "set default";
+	};
+	unique?: boolean;
+	bigint?: boolean;
+	validator?: {
+		input?: any;
+		output?: any;
+	};
 	fieldName?: string;
+	sortable?: boolean;
+	index?: boolean;
 }
 
 interface PluginSchemaTable {
 	fields: Record<string, SchemaField>;
+	disableMigration?: boolean;
 	modelName?: string;
 }
 
