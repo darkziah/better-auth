@@ -87,7 +87,7 @@ export declare const createClient: <DataModel extends GenericDataModel, Schema e
      * @returns A promise that resolves to the Better Auth `auth` API object and
      * headers.
      */
-    getAuth: <T extends CreateAuth<DataModel>>(createAuth: T, ctx: GenericCtx<DataModel>) => Promise<{
+    getAuth: <T extends CreateAuth<DataModel, any>>(createAuth: T, ctx: GenericCtx<DataModel>) => Promise<{
         auth: ReturnType<T>;
         headers: Headers;
     }>;
@@ -171,7 +171,7 @@ export declare const createClient: <DataModel extends GenericDataModel, Schema e
             doc: any;
         }, Promise<void>>;
     };
-    registerRoutes: (http: HttpRouter, createAuth: CreateAuth<DataModel>, opts?: {
+    registerRoutes: <T extends CreateAuth<DataModel, any>>(http: HttpRouter, createAuth: T, opts?: {
         cors?: boolean | {
             allowedOrigins?: string[];
             allowedHeaders?: string[];

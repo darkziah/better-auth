@@ -19,6 +19,7 @@ import { corsRouter } from "convex-helpers/server/cors";
 import type defaultSchema from "../component/schema.js";
 import type { ComponentApi } from "../component/_generated/component.js";
 import type { CreateAuth, GenericCtx } from "./index.js";
+import type { betterAuth } from "better-auth/minimal";
 
 export type AuthFunctions = {
   onCreate?: FunctionReference<"mutation", "internal", { [key: string]: any }>;
@@ -200,7 +201,7 @@ export const createClient = <
      * @returns A promise that resolves to the Better Auth `auth` API object and
      * headers.
      */
-    getAuth: async <T extends CreateAuth<DataModel>>(
+    getAuth: async <T extends CreateAuth<DataModel, any>>(
       createAuth: T,
       ctx: GenericCtx<DataModel>
     ) => ({
@@ -336,9 +337,9 @@ export const createClient = <
       }),
     }),
 
-    registerRoutes: (
+    registerRoutes: <T extends CreateAuth<DataModel, any>>(
       http: HttpRouter,
-      createAuth: CreateAuth<DataModel>,
+      createAuth: T,
       opts: {
         cors?:
           | boolean
@@ -350,7 +351,7 @@ export const createClient = <
             };
       } = {}
     ) => {
-      const staticAuth = createAuth({} as any);
+      const staticAuth = createAuth({} as any) as ReturnType<typeof betterAuth>;
       const path = staticAuth.options.basePath ?? "/api/auth";
       const authRequestHandler = httpActionGeneric(async (ctx, request) => {
         if (config?.verbose) {
