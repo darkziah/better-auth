@@ -22,7 +22,7 @@
  */
 
 interface SchemaField {
-	type: string;
+	type: "string" | "number" | "boolean" | "date";
 	required?: boolean;
 	sortable?: boolean;
 	unique?: boolean;
