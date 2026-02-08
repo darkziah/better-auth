@@ -1,39 +1,38 @@
 export declare const create: import("convex/server").RegisteredMutation<"public", {
-    select?: string[] | undefined;
     onCreateHandle?: string | undefined;
+    select?: string[] | undefined;
     input: {
-        model: string;
         data: {
             [x: string]: any;
             [x: number]: any;
             [x: symbol]: any;
         };
+        model: string;
     };
 }, Promise<any>>, findOne: import("convex/server").RegisteredQuery<"public", {
     join?: any;
     select?: string[] | undefined;
     where?: {
-        operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+        operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
         connector?: "AND" | "OR" | undefined;
+        value: string | number | boolean | string[] | number[] | null;
         field: string;
-        value: string | number | boolean | number[] | string[] | null;
     }[] | undefined;
     model: string;
 }, Promise<import("convex/server").GenericDocument | null>>, findMany: import("convex/server").RegisteredQuery<"public", {
     join?: any;
-    where?: {
-        operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
-        connector?: "AND" | "OR" | undefined;
-        field: string;
-        value: string | number | boolean | number[] | string[] | null;
-    }[] | undefined;
-    sortBy?: {
-        field: string;
-        direction: "asc" | "desc";
-    } | undefined;
     limit?: number | undefined;
     offset?: number | undefined;
-    model: string;
+    sortBy?: {
+        field: string;
+        direction: "desc" | "asc";
+    } | undefined;
+    where?: {
+        operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+        connector?: "AND" | "OR" | undefined;
+        value: string | number | boolean | string[] | number[] | null;
+        field: string;
+    }[] | undefined;
     paginationOpts: {
         id?: number;
         endCursor?: string | null;
@@ -42,14 +41,15 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
         numItems: number;
         cursor: string | null;
     };
+    model: string;
 }, Promise<import("convex/server").PaginationResult<import("convex/server").GenericDocument>>>, updateOne: import("convex/server").RegisteredMutation<"public", {
     onUpdateHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
+            value: string | number | boolean | string[] | number[] | null;
             field: string;
-            value: string | number | boolean | number[] | string[] | null;
         }[] | undefined;
         model: import("./_generated/dataModel.js").TableNames;
         update: {
@@ -62,10 +62,10 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     onUpdateHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
+            value: string | number | boolean | string[] | number[] | null;
             field: string;
-            value: string | number | boolean | number[] | string[] | null;
         }[] | undefined;
         model: import("./_generated/dataModel.js").TableNames;
         update: {
@@ -93,10 +93,10 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     onDeleteHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
+            value: string | number | boolean | string[] | number[] | null;
             field: string;
-            value: string | number | boolean | number[] | string[] | null;
         }[] | undefined;
         model: import("./_generated/dataModel.js").TableNames;
     };
@@ -104,10 +104,10 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     onDeleteHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
+            value: string | number | boolean | string[] | number[] | null;
             field: string;
-            value: string | number | boolean | number[] | string[] | null;
         }[] | undefined;
         model: import("./_generated/dataModel.js").TableNames;
     };

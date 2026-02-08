@@ -163,8 +163,8 @@ export declare const createClient: <DataModel extends GenericDataModel, Schema e
         }, Promise<void>>;
         onUpdate: import("convex/server").RegisteredMutation<"internal", {
             model: string;
-            newDoc: any;
             oldDoc: any;
+            newDoc: any;
         }, Promise<void>>;
         onDelete: import("convex/server").RegisteredMutation<"internal", {
             model: string;

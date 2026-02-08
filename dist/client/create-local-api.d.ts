@@ -2,43 +2,42 @@ import type { BetterAuthOptions } from "better-auth/minimal";
 import type { SchemaDefinition } from "convex/server";
 export declare const createLocalApi: <Schema extends SchemaDefinition<any, any>>(schema: Schema, createAuthOptions: (ctx: any) => BetterAuthOptions) => {
     create: import("convex/server").RegisteredMutation<"internal", {
-        select?: string[] | undefined;
         onCreateHandle?: string | undefined;
+        select?: string[] | undefined;
         input: {
-            model: string;
             data: {
                 [x: string]: any;
                 [x: number]: any;
                 [x: symbol]: any;
             };
+            model: string;
         };
     }, Promise<any>>;
     findOne: import("convex/server").RegisteredQuery<"internal", {
         join?: any;
         select?: string[] | undefined;
         where?: {
-            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
+            value: string | number | boolean | string[] | number[] | null;
             field: string;
-            value: string | number | boolean | number[] | string[] | null;
         }[] | undefined;
         model: string;
     }, Promise<import("convex/server").GenericDocument | null>>;
     findMany: import("convex/server").RegisteredQuery<"internal", {
         join?: any;
-        where?: {
-            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
-            connector?: "AND" | "OR" | undefined;
-            field: string;
-            value: string | number | boolean | number[] | string[] | null;
-        }[] | undefined;
-        sortBy?: {
-            field: string;
-            direction: "asc" | "desc";
-        } | undefined;
         limit?: number | undefined;
         offset?: number | undefined;
-        model: string;
+        sortBy?: {
+            field: string;
+            direction: "desc" | "asc";
+        } | undefined;
+        where?: {
+            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            connector?: "AND" | "OR" | undefined;
+            value: string | number | boolean | string[] | number[] | null;
+            field: string;
+        }[] | undefined;
         paginationOpts: {
             id?: number;
             endCursor?: string | null;
@@ -47,15 +46,16 @@ export declare const createLocalApi: <Schema extends SchemaDefinition<any, any>>
             numItems: number;
             cursor: string | null;
         };
+        model: string;
     }, Promise<import("convex/server").PaginationResult<import("convex/server").GenericDocument>>>;
     updateOne: import("convex/server").RegisteredMutation<"internal", {
         onUpdateHandle?: string | undefined;
         input: {
             where?: {
-                operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+                operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
                 connector?: "AND" | "OR" | undefined;
+                value: string | number | boolean | string[] | number[] | null;
                 field: string;
-                value: string | number | boolean | number[] | string[] | null;
             }[] | undefined;
             model: string;
             update: {
@@ -69,10 +69,10 @@ export declare const createLocalApi: <Schema extends SchemaDefinition<any, any>>
         onUpdateHandle?: string | undefined;
         input: {
             where?: {
-                operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+                operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
                 connector?: "AND" | "OR" | undefined;
+                value: string | number | boolean | string[] | number[] | null;
                 field: string;
-                value: string | number | boolean | number[] | string[] | null;
             }[] | undefined;
             model: string;
             update: {
@@ -101,10 +101,10 @@ export declare const createLocalApi: <Schema extends SchemaDefinition<any, any>>
         onDeleteHandle?: string | undefined;
         input: {
             where?: {
-                operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+                operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
                 connector?: "AND" | "OR" | undefined;
+                value: string | number | boolean | string[] | number[] | null;
                 field: string;
-                value: string | number | boolean | number[] | string[] | null;
             }[] | undefined;
             model: string;
         };
@@ -113,10 +113,10 @@ export declare const createLocalApi: <Schema extends SchemaDefinition<any, any>>
         onDeleteHandle?: string | undefined;
         input: {
             where?: {
-                operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+                operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
                 connector?: "AND" | "OR" | undefined;
+                value: string | number | boolean | string[] | number[] | null;
                 field: string;
-                value: string | number | boolean | number[] | string[] | null;
             }[] | undefined;
             model: string;
         };
