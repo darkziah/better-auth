@@ -1,19 +1,19 @@
 export declare const create: import("convex/server").RegisteredMutation<"public", {
-    onCreateHandle?: string | undefined;
     select?: string[] | undefined;
+    onCreateHandle?: string | undefined;
     input: {
+        model: string;
         data: {
             [x: string]: any;
             [x: number]: any;
             [x: symbol]: any;
         };
-        model: string;
     };
 }, Promise<any>>, findOne: import("convex/server").RegisteredQuery<"public", {
     join?: any;
     select?: string[] | undefined;
     where?: {
-        operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+        operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
         connector?: "AND" | "OR" | undefined;
         value: string | number | boolean | string[] | number[] | null;
         field: string;
@@ -21,18 +21,19 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     model: string;
 }, Promise<import("convex/server").GenericDocument | null>>, findMany: import("convex/server").RegisteredQuery<"public", {
     join?: any;
-    limit?: number | undefined;
-    offset?: number | undefined;
-    sortBy?: {
-        field: string;
-        direction: "desc" | "asc";
-    } | undefined;
     where?: {
-        operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+        operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
         connector?: "AND" | "OR" | undefined;
         value: string | number | boolean | string[] | number[] | null;
         field: string;
     }[] | undefined;
+    sortBy?: {
+        field: string;
+        direction: "asc" | "desc";
+    } | undefined;
+    limit?: number | undefined;
+    offset?: number | undefined;
+    model: string;
     paginationOpts: {
         id?: number;
         endCursor?: string | null;
@@ -41,17 +42,16 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
         numItems: number;
         cursor: string | null;
     };
-    model: string;
 }, Promise<import("convex/server").PaginationResult<import("convex/server").GenericDocument>>>, updateOne: import("convex/server").RegisteredMutation<"public", {
     onUpdateHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
             value: string | number | boolean | string[] | number[] | null;
             field: string;
         }[] | undefined;
-        model: import("./_generated/dataModel.js").TableNames;
+        model: string;
         update: {
             [x: string]: unknown;
             [x: number]: unknown;
@@ -62,12 +62,12 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     onUpdateHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
             value: string | number | boolean | string[] | number[] | null;
             field: string;
         }[] | undefined;
-        model: import("./_generated/dataModel.js").TableNames;
+        model: string;
         update: {
             [x: string]: unknown;
             [x: number]: unknown;
@@ -93,23 +93,23 @@ export declare const create: import("convex/server").RegisteredMutation<"public"
     onDeleteHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
             value: string | number | boolean | string[] | number[] | null;
             field: string;
         }[] | undefined;
-        model: import("./_generated/dataModel.js").TableNames;
+        model: string;
     };
 }, Promise<import("convex/server").GenericDocument | undefined>>, deleteMany: import("convex/server").RegisteredMutation<"public", {
     onDeleteHandle?: string | undefined;
     input: {
         where?: {
-            operator?: "in" | "lt" | "lte" | "gt" | "gte" | "eq" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
+            operator?: "lt" | "lte" | "gt" | "gte" | "eq" | "in" | "not_in" | "ne" | "contains" | "starts_with" | "ends_with" | undefined;
             connector?: "AND" | "OR" | undefined;
             value: string | number | boolean | string[] | number[] | null;
             field: string;
         }[] | undefined;
-        model: import("./_generated/dataModel.js").TableNames;
+        model: string;
     };
     paginationOpts: {
         id?: number;

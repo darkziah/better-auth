@@ -4,6 +4,9 @@ import { asyncMap } from "convex-helpers";
 import { partial } from "convex-helpers/validators";
 import { adapterWhereValidator, checkUniqueFields, hasUniqueFields, listOne, paginate, selectFields, } from "./adapter-utils.js";
 import { getAuthTables } from "better-auth/db";
+// Note: this file uses `string` for model/table names instead of the
+// component-scoped `TableNames` type. The actual model set is enforced at
+// runtime by the v.literal() unions built from schema.tables.
 const whereValidator = (schema, tableName) => v.object({
     field: v.union(...Object.keys(schema.tables[tableName].validator.fields).map((field) => v.literal(field)), v.literal("_id")),
     operator: v.optional(v.union(v.literal("lt"), v.literal("lte"), v.literal("gt"), v.literal("gte"), v.literal("eq"), v.literal("in"), v.literal("not_in"), v.literal("ne"), v.literal("contains"), v.literal("starts_with"), v.literal("ends_with"))),

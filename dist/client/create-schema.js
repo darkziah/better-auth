@@ -8,6 +8,11 @@ export const indexFields = {
     user: [["email", "name"], "name"],
     passkey: ["credentialID"],
     oauthConsent: [["clientId", "userId"]],
+    // Organization plugin composite indexes — needed for efficient lookups by
+    // Better Auth's org API (findMemberByOrgAndUser, findInvitationByOrgAndEmail, etc.)
+    member: [["organizationId", "userId"]],
+    invitation: [["email", "organizationId"]],
+    teamMember: [["teamId", "userId"]],
 };
 // Return map of unique, sortable, and reference fields
 const specialFields = (tables) => Object.fromEntries(Object.entries(tables)

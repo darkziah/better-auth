@@ -7,6 +7,9 @@ export declare const indexFields: {
     user: (string | string[])[];
     passkey: string[];
     oauthConsent: string[][];
+    member: string[][];
+    invitation: string[][];
+    teamMember: string[][];
 };
 export declare const createSchema: ({ file, tables, }: {
     tables: BetterAuthDBSchema;
