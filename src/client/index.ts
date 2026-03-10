@@ -5,6 +5,7 @@ import { createClient } from "./create-client.js";
 import type { AuthFunctions, Triggers } from "./create-client.js";
 import { createApi } from "./create-api.js";
 import { createLocalApi } from "./create-local-api.js";
+import { createLocalAdapter } from "./create-local-api.js";
 import type { CreateAuth, EventFunction, GenericCtx } from "../utils/index.js";
 
 if (semverLt(convexVersion, "1.25.0")) {
@@ -16,6 +17,7 @@ export {
   createClient,
   createApi,
   createLocalApi,
+  createLocalAdapter,
   type CreateAuth,
   type EventFunction,
   type GenericCtx,

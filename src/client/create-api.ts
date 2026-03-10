@@ -17,12 +17,15 @@ import {
   selectFields,
 } from "./adapter-utils.js";
 import { getAuthTables } from "better-auth/db";
-import type { TableNames } from "../component/_generated/dataModel.js";
 import type { BetterAuthOptions } from "better-auth/minimal";
+
+// Note: this file uses `string` for model/table names instead of the
+// component-scoped `TableNames` type. The actual model set is enforced at
+// runtime by the v.literal() unions built from schema.tables.
 
 const whereValidator = (
   schema: SchemaDefinition<any, any>,
-  tableName: TableNames
+  tableName: string
 ) =>
   v.object({
     field: v.union(
@@ -144,7 +147,7 @@ export const createApi = <Schema extends SchemaDefinition<any, any>>(
         input: v.union(
           ...Object.entries(schema.tables).map(
             ([name, table]: [string, Schema["tables"][string]]) => {
-              const tableName = name as TableNames;
+              const tableName = name;
               const fields = partial(table.validator.fields);
               return v.object({
                 model: v.literal(tableName),
@@ -195,7 +198,7 @@ export const createApi = <Schema extends SchemaDefinition<any, any>>(
         input: v.union(
           ...Object.entries(schema.tables).map(
             ([name, table]: [string, Schema["tables"][string]]) => {
-              const tableName = name as TableNames;
+              const tableName = name;
               const fields = partial(table.validator.fields);
               return v.object({
                 model: v.literal(tableName),
@@ -268,7 +271,7 @@ export const createApi = <Schema extends SchemaDefinition<any, any>>(
       args: {
         input: v.union(
           ...Object.keys(schema.tables).map((name: string) => {
-            const tableName = name as TableNames;
+            const tableName = name;
             return v.object({
               model: v.literal(tableName),
               where: v.optional(v.array(whereValidator(schema, tableName))),
@@ -296,7 +299,7 @@ export const createApi = <Schema extends SchemaDefinition<any, any>>(
       args: {
         input: v.union(
           ...Object.keys(schema.tables).map((name: string) => {
-            const tableName = name as TableNames;
+            const tableName = name;
             return v.object({
               model: v.literal(tableName),
               where: v.optional(v.array(whereValidator(schema, tableName))),

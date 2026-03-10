@@ -47,11 +47,11 @@ interface SchemaField {
 		model: string;
 		field: string;
 		onDelete?:
-			| "no action"
-			| "restrict"
-			| "cascade"
-			| "set null"
-			| "set default";
+		| "no action"
+		| "restrict"
+		| "cascade"
+		| "set null"
+		| "set default";
 	};
 	unique?: boolean;
 	bigint?: boolean;
@@ -79,15 +79,37 @@ interface SchemaOnlyPlugin {
  * Schema-only version of `organization()` from `better-auth/plugins/organization`.
  *
  * Returns the same schema shapes the real plugin produces, without heavy
- * runtime dependencies.
+ * runtime dependencies. Use this in your `convex/schema.ts` to define
+ * organization tables without importing the real plugin.
+ *
+ * **Supported options:**
+ * - `teams.enabled`: Include `team` and `teamMember` tables
+ * - `schema.organization.additionalFields`: Extra fields on the `organization` table
+ * - `schema.organization.modelName`: Rename the `organization` table
+ * - `schema.member.additionalFields`: Extra fields on the `member` table
+ * - `schema.member.modelName`: Rename the `member` table
+ * - `schema.invitation.additionalFields`: Extra fields on the `invitation` table
+ * - `schema.invitation.modelName`: Rename the `invitation` table
+ *
+ * **Limitations vs the real plugin:**
+ * - No runtime hooks (onOrganizationCreated, etc.)
+ * - No access control / RBAC configuration
+ * - No `organizationRole` table (custom roles must be implemented at the app layer)
+ * - `modelName` on `team`/`teamMember` is not supported (use direct schema definition)
  */
 export function organization(options?: {
 	teams?: { enabled?: boolean };
 	schema?: {
 		organization?: {
+			modelName?: string;
+			additionalFields?: Record<string, SchemaField>;
+		};
+		member?: {
+			modelName?: string;
 			additionalFields?: Record<string, SchemaField>;
 		};
 		invitation?: {
+			modelName?: string;
 			additionalFields?: Record<string, SchemaField>;
 		};
 	};
@@ -96,6 +118,9 @@ export function organization(options?: {
 
 	const schema: Record<string, PluginSchemaTable> = {
 		organization: {
+			...(options?.schema?.organization?.modelName
+				? { modelName: options.schema.organization.modelName }
+				: {}),
 			fields: {
 				name: { type: "string", required: true, sortable: true },
 				slug: {
@@ -112,6 +137,9 @@ export function organization(options?: {
 			},
 		},
 		member: {
+			...(options?.schema?.member?.modelName
+				? { modelName: options.schema.member.modelName }
+				: {}),
 			fields: {
 				organizationId: {
 					type: "string",
@@ -132,9 +160,13 @@ export function organization(options?: {
 					defaultValue: "member",
 				},
 				createdAt: { type: "date", required: true },
+				...options?.schema?.member?.additionalFields,
 			},
 		},
 		invitation: {
+			...(options?.schema?.invitation?.modelName
+				? { modelName: options.schema.invitation.modelName }
+				: {}),
 			fields: {
 				organizationId: {
 					type: "string",

@@ -17,7 +17,14 @@ import { passkey } from "@better-auth/passkey";
 import { convex } from "./plugins/convex/index.js";
 import { convexAdapter } from "./client/adapter.js";
 
-// This is the config used to generate the schema
+// This is the config used to generate the *component-scoped* schema
+// (src/component/schema.ts). Organization, admin, and other plugins whose
+// tables should live in the ROOT schema (same-schema mode) are intentionally
+// excluded here.
+//
+// To add org tables to the root schema, use the schema-only shims:
+//   import { organization } from "@convex-dev/better-auth/schema";
+//   getConvexAuthTables({ plugins: [organization()] })
 export const options = {
   database: convexAdapter({} as any, {} as any),
   rateLimit: {
@@ -28,8 +35,8 @@ export const options = {
     anonymous(),
     username(),
     phoneNumber(),
-    magicLink({ sendMagicLink: async () => {} }),
-    emailOTP({ sendVerificationOTP: async () => {} }),
+    magicLink({ sendMagicLink: async () => { } }),
+    emailOTP({ sendVerificationOTP: async () => { } }),
     passkey(),
     genericOAuth({
       config: [

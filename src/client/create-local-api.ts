@@ -58,6 +58,24 @@ const whereValidator = (
 		connector: v.optional(v.union(v.literal("AND"), v.literal("OR"))),
 	});
 
+/**
+ * Create a local adapter API that operates directly against the root Convex
+ * schema. Returns internal query/mutation function definitions that can be
+ * exported from a Convex module file.
+ *
+ * This is the low-level API. For same-schema mode integration with
+ * `createClient()`, prefer {@link createLocalAdapter} which wraps this
+ * into the shape expected by the client.
+ *
+ * @example
+ * ```ts
+ * // convex/localAdapter.ts
+ * import { createLocalApi } from "@convex-dev/better-auth";
+ * import schema from "./schema";
+ * export const { create, findOne, findMany, updateOne, updateMany, deleteOne, deleteMany }
+ *   = createLocalApi(schema, () => ({ plugins: [organization()] }));
+ * ```
+ */
 export const createLocalApi = <Schema extends SchemaDefinition<any, any>>(
 	schema: Schema,
 	createAuthOptions: (ctx: any) => BetterAuthOptions,
@@ -336,5 +354,62 @@ export const createLocalApi = <Schema extends SchemaDefinition<any, any>>(
 				};
 			},
 		}),
+	};
+};
+
+/**
+ * Create adapter functions for **same-schema mode** — where auth tables
+ * (including organization plugin tables) live in the root Convex schema
+ * instead of being scoped to a component.
+ *
+ * Returns an `adapter` object whose shape matches `SlimComponentApi["adapter"]`
+ * from `create-client.ts`. Export these from a Convex module file, then pass
+ * the module's API to `createClient()` instead of the component API.
+ *
+ * @example
+ * ```ts
+ * // convex/localAdapter.ts — export the adapter functions
+ * import { createLocalAdapter } from "@convex-dev/better-auth/schema";
+ * import { organization } from "@convex-dev/better-auth/schema";
+ * import schema from "./schema";
+ *
+ * export const { adapter } = createLocalAdapter(schema, () => ({
+ *   plugins: [organization({ teams: { enabled: true } })],
+ * }));
+ * // This creates: adapter.create, adapter.findOne, adapter.findMany, etc.
+ * ```
+ *
+ * ```ts
+ * // convex/auth.ts — wire the adapter into createClient
+ * import { createClient } from "@convex-dev/better-auth";
+ * import { api } from "./_generated/api";
+ *
+ * // Pass the local adapter instead of `components.betterAuth`
+ * const authComponent = createClient(
+ *   { adapter: api.localAdapter.adapter },
+ *   { local: { schema } }
+ * );
+ * ```
+ *
+ * @param schema - Your root `convex/schema.ts` (must include auth + org tables
+ *   via `getConvexAuthTables`).
+ * @param createAuthOptions - Factory returning Better Auth options. Must include
+ *   the same plugins used in `getConvexAuthTables` in your schema.
+ */
+export const createLocalAdapter = <Schema extends SchemaDefinition<any, any>>(
+	schema: Schema,
+	createAuthOptions: (ctx: any) => BetterAuthOptions,
+) => {
+	const api = createLocalApi(schema, createAuthOptions);
+	return {
+		adapter: {
+			create: api.create,
+			findOne: api.findOne,
+			findMany: api.findMany,
+			updateOne: api.updateOne,
+			updateMany: api.updateMany,
+			deleteOne: api.deleteOne,
+			deleteMany: api.deleteMany,
+		},
 	};
 };

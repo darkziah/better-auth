@@ -10,6 +10,11 @@ export const indexFields = {
   user: [["email", "name"], "name"],
   passkey: ["credentialID"],
   oauthConsent: [["clientId", "userId"]],
+  // Organization plugin composite indexes — needed for efficient lookups by
+  // Better Auth's org API (findMemberByOrgAndUser, findInvitationByOrgAndEmail, etc.)
+  member: [["organizationId", "userId"]],
+  invitation: [["email", "organizationId"]],
+  teamMember: [["teamId", "userId"]],
 };
 
 // Return map of unique, sortable, and reference fields
@@ -49,7 +54,7 @@ const mergedIndexFields = (tables: BetterAuthDBSchema) =>
         }) || [];
       const specialFieldIndexes = Object.keys(
         specialFields(tables)[key as keyof ReturnType<typeof specialFields>] ||
-          {}
+        {}
       ).filter(
         (index) =>
           !manualIndexes.some((m) =>
@@ -137,16 +142,16 @@ export const tables = {
 
     const schema = `${modelName}: defineTable({
 ${Object.keys(fields)
-  .map((field) => {
-    const attr = fields[field]!;
-    const type = getType(field, attr as DBFieldAttribute);
-    const optional = (fieldSchema: string) =>
-      attr.required
-        ? fieldSchema
-        : `v.optional(v.union(v.null(), ${fieldSchema}))`;
-    return `    ${attr.fieldName ?? field}: ${optional(type)},`;
-  })
-  .join("\n")}
+        .map((field) => {
+          const attr = fields[field]!;
+          const type = getType(field, attr as DBFieldAttribute);
+          const optional = (fieldSchema: string) =>
+            attr.required
+              ? fieldSchema
+              : `v.optional(v.union(v.null(), ${fieldSchema}))`;
+          return `    ${attr.fieldName ?? field}: ${optional(type)},`;
+        })
+        .join("\n")}
   })${indexes.length > 0 ? `\n    ${indexes.join("\n    ")}` : ""},\n`;
     code += `  ${schema}`;
   }
