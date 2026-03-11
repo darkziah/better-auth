@@ -1,7 +1,7 @@
 import type { BetterAuthDBSchema, DBFieldAttribute } from "better-auth/db";
 import type { BetterAuthOptions } from "better-auth/minimal";
-import { defineTable } from "convex/server";
-import { v } from "convex/values";
+import { defineTable, type GenericSchema } from "convex/server";
+import { type GenericValidator, v } from "convex/values";
 import { indexFields } from "./create-schema.js";
 
 /**
@@ -377,10 +377,10 @@ function getValidator(field: DBFieldAttribute) {
  */
 export function getConvexAuthTables(
 	options: BetterAuthOptions,
-): Record<string, any> {
+): GenericSchema {
 	const tables = getAuthTables(options);
 	const allIndexFields = mergedIndexFields(tables);
-	const result: Record<string, any> = {};
+	const result: GenericSchema = {};
 
 	for (const tableKey in tables) {
 		const table = tables[tableKey]!;
@@ -390,7 +390,7 @@ export function getConvexAuthTables(
 			Object.entries(table.fields).filter(([key]) => key !== "id"),
 		);
 
-		const validatorFields: Record<string, any> = {};
+		const validatorFields: Record<string, GenericValidator> = {};
 		for (const fieldKey in fields) {
 			const attr = fields[fieldKey]! as DBFieldAttribute;
 			const fieldName = attr.fieldName ?? fieldKey;
